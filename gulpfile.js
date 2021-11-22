@@ -66,6 +66,11 @@ function html() {
 				.pipe(gulp.dest('./build'))
 				.pipe(browserSync.stream());
 };
+function php() {
+	return gulp.src('./server.php')
+				.pipe(gulp.dest('./build'))
+				.pipe(browserSync.stream());
+};
 function js(){
 	return gulp.src('./src/js/**/*.js')
 			.pipe(gulp.dest('./build/js'))
@@ -76,7 +81,8 @@ function watch(){
 	gulp.watch('./src/css/**/*.css', styles)
 	gulp.watch('index.html', html)
 	gulp.watch('./src/js/main.js', js)
-	gulp.watch('src/img/**/*')
+	gulp.watch('src/img/**/*', img)
+	gulp.watch('./server.php', php)
 	browserSync.init({
         server: {
             baseDir: "./build"
@@ -85,7 +91,7 @@ function watch(){
 };
 
 let build = gulp.series(clear,
-	gulp.parallel(icons, styles, img, html, js));
+	gulp.parallel(icons, styles, img, html, php, js));
 
 gulp.task ('build', build);
 gulp.task('watch', gulp.series(build, watch));

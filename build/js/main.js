@@ -88,8 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //Modal
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal'),
-        modalCloseBtn = document.querySelector('[data-close]');
+        modal = document.querySelector('.modal');
     
         function openModal() {
             modal.classList.add('show');
@@ -107,12 +106,11 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }); 
 
-        modalCloseBtn.addEventListener('click', closeModal);
 
         modal.addEventListener('click', (e) => {
-            if(e.target === modal) {
+            if(e.target === modal || e.target.getAttribute('data-close') == '') {
                 closeModal();
-            }
+            } 
         });
 
         document.addEventListener('keydown', (e) => {
@@ -121,7 +119,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        //const modalTimerId = setTimeout(openModal, 3000);
+        const modalTimerId = setTimeout(openModal, 3000);
 
         function showModalByScroll () {
             if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -210,4 +208,141 @@ window.addEventListener('DOMContentLoaded', () => {
         14  ,
         '.menu .container', 'menu__item', 'big'
     ).render();
+
+    //Forms
+
+        const forms = document.querySelectorAll('form');
+
+        const message = {
+            load: 'img/form/spinner.svg',
+            success: 'Спасибо! Скоро мы вам перезвоним',
+            failure: 'Что-то пошло не так'
+        };
+
+        forms.forEach(item => {
+            postData(item);
+        });
+
+        function postData(forms) {
+            forms.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const statusMessage = document.createElement('img');
+                statusMessage.src = message.load;
+                statusMessage.style.cssText = `
+                    display: block;
+                    margin: 0 auto;
+                `;
+                statusMessage.textContent = message.load;
+                //forms.append(statusMessage);
+                forms.insertAdjacentElement('afterend', statusMessage);
+
+                const request = new XMLHttpRequest();
+                request.open('POST', 'server.php');
+
+                request.setRequestHeader('Content-type', 'application/json');
+                const formData = new FormData(forms);
+
+                const object = {};
+                formData.forEach(function(value, key) {
+                    object[key] = value;
+                });
+
+                const toJson = JSON.stringify(object);
+                request.send(toJson);
+
+                request.addEventListener('load', () => {
+                    if (request.status === 200) {
+                        console.log(request.response);
+                            showThanksModal(message.success);
+                            statusMessage.classList.remove('show', 'fade');
+                            statusMessage.classList.add('hide');
+                    } else {
+                        showThanksModal(message.failure);
+                    }
+                });
+
+                function showThanksModal(message) {
+                    const prevModalDialog = document.querySelector('.modal__dialog');
+                    prevModalDialog.classList.add('hide');
+                    openModal();
+
+                    const thanksModal = document.createElement('div');
+                    thanksModal.classList.add('modal__dialog');
+                    thanksModal.innerHTML = `
+                    <div class="modal__content">
+                        <div class="modal__close" data-close>×</div>
+                        <div class="modal__title">${message}</div>
+                    </div>
+                    `;
+
+                    const thanksModalBlock = document.querySelector('.modal');
+                    thanksModalBlock.append(thanksModal);
+                    setTimeout(() => {
+                        thanksModal.remove();
+                        prevModalDialog.classList.add('show');
+                        prevModalDialog.classList.remove('hide');
+                        closeModal();
+                        statusMessage.style.cssText = ``;
+                    }, 4000);
+
+                }
+            });
+        }
+
+
+    // const form = document.querySelectorAll('form');
+
+    // const message = {
+    //     load: 'Загрузка...',
+    //     success: 'Спасибо! Скоро мы с вами свяжемся',
+    //     failure: 'Что-то пошло не так...'
+    // };
+
+    // form.forEach(item => {
+    //     postData(item);
+    // });
+
+    // function postData(form) {
+    //     form.addEventListener('submit',(e) => {
+    //         e.preventDefault();
+
+    //         const statusMessage = document.createElement('div');
+    //         statusMessage.classList.add('show', 'fade');
+    //         statusMessage.classList.remove('hide');
+    //         statusMessage.textContent = message.load;
+    //         form.append(statusMessage);
+
+    //         const request = new XMLHttpRequest();
+    //         request.open('POST', 'server.php');
+
+    //         request.setRequestHeader('Content-type', 'application/json');
+    //         const formData = new FormData(form);
+
+    //         const object = {};
+    //         formData.forEach(function(value,key){
+    //             object[key] = value;
+    //         });
+
+    //         const toJson = JSON.stringify(object);
+
+    //         request.send(toJson);
+
+    //         request.addEventListener('load', () => {
+    //             if (request.status === 200) {
+    //                 console.log(request.response);
+    //                 statusMessage.textContent = message.success;
+    //                 form.reset();
+    //                 setTimeout(() => {
+    //                     statusMessage.classList.remove('show', 'fade');
+    //                     statusMessage.classList.add('hide');
+    //                 }, 2000);
+    //             } else {
+    //                 statusMessage.textContent = message.failure;
+    //             }
+    //         });
+
+    //     });
+    // }
+   
 });
