@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 //timer
 
-    const deadline = '2021-11-18';
+    const deadline = '2021-11-23 12:30';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -289,7 +289,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
+        
+        // fetch('https://jsonplaceholder.typicode.com/posts', {
+        //     method: "POST",
+        //     body: JSON.stringify({name:'Alex'}),
+        //     headers: {
+        //         'Content-tipe': 'application/json'
+        //     }
+        // })
+        //     .then(response => response.json())
+        //     .then(json => console.log(json)); 
 
     // const form = document.querySelectorAll('form');
 
