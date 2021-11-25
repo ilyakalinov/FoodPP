@@ -211,7 +211,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //Forms
 
-        const forms = document.querySelectorAll('form');
+        const form = document.querySelectorAll('form');
 
         const message = {
             load: 'img/form/spinner.svg',
@@ -219,12 +219,12 @@ window.addEventListener('DOMContentLoaded', () => {
             failure: 'Что-то пошло не так'
         };
 
-        forms.forEach(item => {
+        form.forEach(item => {
             postData(item);
         });
 
-        function postData(forms) {
-            forms.addEventListener('submit', (e) => {
+        function postData(form) {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 const statusMessage = document.createElement('img');
@@ -234,32 +234,34 @@ window.addEventListener('DOMContentLoaded', () => {
                     margin: 0 auto;
                 `;
                 statusMessage.textContent = message.load;
-                //forms.append(statusMessage);
-                forms.insertAdjacentElement('afterend', statusMessage);
 
-                const request = new XMLHttpRequest();
-                request.open('POST', 'server.php');
+                form.insertAdjacentElement('afterend', statusMessage);
 
-                request.setRequestHeader('Content-type', 'application/json');
-                const formData = new FormData(forms);
+                const formData = new FormData(form);
 
                 const object = {};
                 formData.forEach(function(value, key) {
                     object[key] = value;
                 });
 
-                const toJson = JSON.stringify(object);
-                request.send(toJson);
 
-                request.addEventListener('load', () => {
-                    if (request.status === 200) {
-                        console.log(request.response);
-                            showThanksModal(message.success);
-                            statusMessage.classList.remove('show', 'fade');
-                            statusMessage.classList.add('hide');
-                    } else {
-                        showThanksModal(message.failure);
-                    }
+                fetch('server.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(object)
+                })
+                .then(data => data.text())
+                .then(data => {
+                    console.log(data);
+                    showThanksModal(message.success);
+                    statusMessage.classList.remove('show', 'fade');
+                    statusMessage.classList.add('hide');
+                }).catch(() => {
+                    showThanksModal(message.failure);
+                }).finally(() => {
+                    form.reset();
                 });
 
                 function showThanksModal(message) {
@@ -290,68 +292,4 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // fetch('https://jsonplaceholder.typicode.com/posts', {
-        //     method: "POST",
-        //     body: JSON.stringify({name:'Alex'}),
-        //     headers: {
-        //         'Content-tipe': 'application/json'
-        //     }
-        // })
-        //     .then(response => response.json())
-        //     .then(json => console.log(json)); 
-
-    // const form = document.querySelectorAll('form');
-
-    // const message = {
-    //     load: 'Загрузка...',
-    //     success: 'Спасибо! Скоро мы с вами свяжемся',
-    //     failure: 'Что-то пошло не так...'
-    // };
-
-    // form.forEach(item => {
-    //     postData(item);
-    // });
-
-    // function postData(form) {
-    //     form.addEventListener('submit',(e) => {
-    //         e.preventDefault();
-
-    //         const statusMessage = document.createElement('div');
-    //         statusMessage.classList.add('show', 'fade');
-    //         statusMessage.classList.remove('hide');
-    //         statusMessage.textContent = message.load;
-    //         form.append(statusMessage);
-
-    //         const request = new XMLHttpRequest();
-    //         request.open('POST', 'server.php');
-
-    //         request.setRequestHeader('Content-type', 'application/json');
-    //         const formData = new FormData(form);
-
-    //         const object = {};
-    //         formData.forEach(function(value,key){
-    //             object[key] = value;
-    //         });
-
-    //         const toJson = JSON.stringify(object);
-
-    //         request.send(toJson);
-
-    //         request.addEventListener('load', () => {
-    //             if (request.status === 200) {
-    //                 console.log(request.response);
-    //                 statusMessage.textContent = message.success;
-    //                 form.reset();
-    //                 setTimeout(() => {
-    //                     statusMessage.classList.remove('show', 'fade');
-    //                     statusMessage.classList.add('hide');
-    //                 }, 2000);
-    //             } else {
-    //                 statusMessage.textContent = message.failure;
-    //             }
-    //         });
-
-    //     });
-    // }
-   
 });
