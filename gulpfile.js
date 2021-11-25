@@ -11,8 +11,8 @@ let cssFiles = [
 ];
 
 function clear(){
-	return del('./build/*')
-};
+	return del('./build/*');
+}
 
 function styles() {
 	return gulp.src(cssFiles)
@@ -72,7 +72,7 @@ function php() {
 				.pipe(browserSync.stream());
 };
 function js(){
-	return gulp.src('./src/js/**/*.js')
+	return gulp.src('./src/js/**/*')
 			.pipe(gulp.dest('./build/js'))
 			.pipe(browserSync.stream());
 };
