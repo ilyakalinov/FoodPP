@@ -2,39 +2,39 @@ window.addEventListener('DOMContentLoaded', () => {
     const btnMenu = document.querySelectorAll('.tabheader__item'),
         menuContent = document.querySelectorAll('.tabcontent'),
         btnParent = document.querySelector('.tabheader__items');
-//Tabs
-        function hideMenuContent() {
-            menuContent.forEach(item => {
-                item.classList.add('hide');
-                item.classList.remove('show', 'fade');
-            });
-            btnMenu.forEach(item => {
-                item.classList.remove('tabheader__item_active');
-            });
-        }
-
-        function showMenuContent(i = 0) {
-            btnMenu[i].classList.add('tabheader__item_active');
-            menuContent[i].classList.add('show', 'fade');
-            menuContent[i].classList.remove('hide');
-        };
-
-        hideMenuContent();
-        showMenuContent(0);
-
-        btnParent.addEventListener('click', (event) => {
-            const target = event.target;
-            btnMenu.forEach((item, i) => {
-                if (target == item) {
-                    hideMenuContent();
-                    showMenuContent(i);
-                }
-            });
+    //Tabs
+    function hideMenuContent() {
+        menuContent.forEach(item => {
+            item.classList.add('hide');
+            item.classList.remove('show', 'fade');
         });
+        btnMenu.forEach(item => {
+            item.classList.remove('tabheader__item_active');
+        });
+    }
 
-//timer
+    function showMenuContent(i = 0) {
+        btnMenu[i].classList.add('tabheader__item_active');
+        menuContent[i].classList.add('show', 'fade');
+        menuContent[i].classList.remove('hide');
+    };
 
-    const deadline = '2021-11-23 12:30';
+    hideMenuContent();
+    showMenuContent(0);
+
+    btnParent.addEventListener('click', (event) => {
+        const target = event.target;
+        btnMenu.forEach((item, i) => {
+            if (target == item) {
+                hideMenuContent();
+                showMenuContent(i);
+            }
+        });
+    });
+
+    //timer
+
+    const deadline = '2021-12-2 12:30';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -69,17 +69,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
         updateClock();
 
-    function updateClock () {
-        const t = getTimeRemaining(endtime);
+        function updateClock() {
+            const t = getTimeRemaining(endtime);
 
-        days.innerHTML = getZero(t.days);
-        hours.innerHTML = getZero(t.hours);
-        minutes.innerHTML = getZero(t.minutes);
-        seconds.innerHTML = getZero(t.seconds);
+            days.innerHTML = getZero(t.days);
+            hours.innerHTML = getZero(t.hours);
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
 
-        if (t.total <= 0) {
-            clearInterval(timeInterval);
-        }
+            if (t.total <= 0) {
+                clearInterval(timeInterval);
+            }
         }
     }
 
@@ -89,46 +89,47 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal');
-    
-        function openModal() {
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            clearInterval(modalTimerId);
-        }
-        function closeModal() {
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-        }
 
-        modalTrigger.forEach(item => {
-            item.addEventListener('click', () => {
-                openModal();
-            });
-        }); 
+    function openModal() {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
 
+    function closeModal() {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
 
-        modal.addEventListener('click', (e) => {
-            if(e.target === modal || e.target.getAttribute('data-close') == '') {
-                closeModal();
-            } 
+    modalTrigger.forEach(item => {
+        item.addEventListener('click', () => {
+            openModal();
         });
+    });
 
-        document.addEventListener('keydown', (e) => {
-            if(e.code === 'Escape' && modal.classList.contains('show')) {
-                closeModal();
-            }
-        });
 
-        const modalTimerId = setTimeout(openModal, 3000);
-
-        function showModalByScroll () {
-            if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-                openModal();
-                window.removeEventListener('scroll', showModalByScroll);
-            }
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.getAttribute('data-close') == '') {
+            closeModal();
         }
+    });
 
-        window.addEventListener('scroll', showModalByScroll);
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
+
+    const modalTimerId = setTimeout(openModal, 3000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
 
     //Используем классы для карточек
 
@@ -205,95 +206,209 @@ window.addEventListener('DOMContentLoaded', () => {
         'vegy',
         'Меню "Постное"',
         'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        14  ,
+        14,
         '.menu .container', 'menu__item', 'big'
     ).render();
 
-    //Forms
+    // Forms
+    const forms = document.querySelectorAll('form');
 
-        const form = document.querySelectorAll('form');
+    forms.forEach(item => {
+        postData(item);
+    });
 
-        const message = {
-            load: 'img/form/spinner.svg',
-            success: 'Спасибо! Скоро мы вам перезвоним',
-            failure: 'Что-то пошло не так'
-        };
+    const message = {
+        load: './img/spinner.svg',
+        success: 'Спасибо! Скоро вы вам перезвоним',
+        failure: 'Что-то пошло не так'
+    };
 
-        form.forEach(item => {
-            postData(item);
-        });
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        function postData(form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                const statusMessage = document.createElement('img');
-                statusMessage.src = message.load;
-                statusMessage.style.cssText = `
-                    display: block;
-                    margin: 0 auto;
-                `;
-                statusMessage.textContent = message.load;
-
-                form.insertAdjacentElement('afterend', statusMessage);
-
-                const formData = new FormData(form);
-
-                const object = {};
-                formData.forEach(function(value, key) {
-                    object[key] = value;
-                });
-
-
-                fetch('server.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify(object)
-                })
-                .then(data => data.text())
-                .then(data => {
-                    console.log(data);
-                    showThanksModal(message.success);
-                    statusMessage.classList.remove('show', 'fade');
-                    statusMessage.classList.add('hide');
-                }).catch(() => {
-                    showThanksModal(message.failure);
-                }).finally(() => {
-                    form.reset();
-                });
-
-                function showThanksModal(message) {
-                    const prevModalDialog = document.querySelector('.modal__dialog');
-                    prevModalDialog.classList.add('hide');
-                    openModal();
-
-                    const thanksModal = document.createElement('div');
-                    thanksModal.classList.add('modal__dialog');
-                    thanksModal.innerHTML = `
-                    <div class="modal__content">
-                        <div class="modal__close" data-close>×</div>
-                        <div class="modal__title">${message}</div>
-                    </div>
-                    `;
-
-                    const thanksModalBlock = document.querySelector('.modal');
-                    thanksModalBlock.append(thanksModal);
-                    setTimeout(() => {
-                        thanksModal.remove();
-                        prevModalDialog.classList.add('show');
-                        prevModalDialog.classList.remove('hide');
-                        closeModal();
-                        statusMessage.style.cssText = ``;
-                    }, 4000);
-
-                }
-            });
-        }
-
-        fetch(' http://localhost:3000/menu')
-        .then(data => data.json())
-        .then(res => console.log(res));
+            //const request = new XMLHttpRequest();
         
+            //request.open('POST', 'server.php');
+            //request.setRequestHeader('Content-type', 'application/json');
+            const loadModal = document.createElement('img');
+            loadModal.src = message.load;
+            loadModal.style.cssText = `
+            display: block;
+            margin: 0 auto;
+            `;  
+            
+            //загрузка
+            form.insertAdjacentElement('afterend', loadModal);
+ 
+            const formData = new FormData(form);
+
+            const obj = {};
+            formData.forEach(function (a, b) {
+                obj[b] = a;
+            });
+
+            fetch('server.php', {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json' 
+                },
+                body: JSON.stringify(obj)
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                // успешно
+                showModal(message.success);
+                loadModal.remove();
+            })
+            .catch(() => {
+                //  неудача
+                showModal(message.failure); 
+                loadModal.remove();
+            })
+            .finally(() => {
+                form.reset();
+            });
+
+            
+            // request.addEventListener('load', () => {
+            //     if (request.status === 200) {
+            //         console.log(request.response);
+            //         // успешно
+            //         showModal(message.success);
+            //         form.reset();
+            //         loadModal.remove();
+            //     } else {
+            //         //неудача
+            //         showModal(message.failure);
+            //         form.reset();
+            //         loadModal.remove();
+            //     }
+            // });
+        });
+    }
+
+    function showModal(message) {
+        const prevModal = document.querySelector('.modal__dialog');
+        prevModal.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+    <div class="modal__content">
+                <form action="#">
+                    <div data-close="" class="modal__close">×</div>
+                    <div class="modal__title">${message}</div>
+                </form>
+            </div>
+    `;
+        document.querySelector('.modal').append(thanksModal);
+
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModal.classList.add('show');
+            prevModal.classList.remove('hide');
+            document.querySelector('form input').value = '';
+            closeModal();
+        }, 3000);
+
+    }
+
+    // fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: 'POST',
+    //     body: JSON.stringify({name: 'Alex'}),
+    //     headers: {
+    //         'Content-type': 'application/json'
+    //     }
+    // })
+    //     .then(response => response.json())
+    //     .then(json => console.log(json));
+
+    // const form = document.querySelectorAll('form');
+
+    // const message = {
+    //     load: 'img/form/spinner.svg',
+    //     success: 'Спасибо! Скоро мы вам перезвоним',
+    //     failure: 'Что-то пошло не так'
+    // };
+
+    // form.forEach(item => {
+    //     postData(item);
+    // });
+
+    // function postData(form) {
+    //     form.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+
+    //         const statusMessage = document.createElement('img');
+    //         statusMessage.src = message.load;
+    //         statusMessage.style.cssText = `
+    //             display: block;
+    //             margin: 0 auto;
+    //         `;
+    //         statusMessage.textContent = message.load;
+
+    //         form.insertAdjacentElement('afterend', statusMessage);
+
+    //         const formData = new FormData(form);
+
+    //         const object = {};
+    //         formData.forEach(function(value, key) {
+    //             object[key] = value;
+    //         });
+
+
+    //         fetch('server.php', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-type': 'application/json'
+    //             },
+    //             body: JSON.stringify(object)
+    //         })
+    //         .then(data => data.text())
+    //         .then(data => {
+    //             console.log(data);
+    //             showThanksModal(message.success);
+    //             statusMessage.classList.remove('show', 'fade');
+    //             statusMessage.classList.add('hide');
+    //         }).catch(() => {
+    //             showThanksModal(message.failure);
+    //         }).finally(() => {
+    //             form.reset();
+    //         });
+
+    //         function showThanksModal(message) {
+    //             const prevModalDialog = document.querySelector('.modal__dialog');
+    //             prevModalDialog.classList.add('hide');
+    //             openModal();
+
+    //             const thanksModal = document.createElement('div');
+    //             thanksModal.classList.add('modal__dialog');
+    //             thanksModal.innerHTML = `
+    //             <div class="modal__content">
+    //                 <div class="modal__close" data-close>×</div>
+    //                 <div class="modal__title">${message}</div>
+    //             </div>
+    //             `;
+
+    //             const thanksModalBlock = document.querySelector('.modal');
+    //             thanksModalBlock.append(thanksModal);
+    //             setTimeout(() => {
+    //                 thanksModal.remove();
+    //                 prevModalDialog.classList.add('show');
+    //                 prevModalDialog.classList.remove('hide');
+    //                 closeModal();
+    //                 statusMessage.style.cssText = ``;
+    //             }, 4000);
+
+    //         }
+    //     });
+    // }
+
+    // fetch(' http://localhost:3000/menu')
+    // .then(data => data.json())
+    // .then(res => console.log(res));
+
 });
