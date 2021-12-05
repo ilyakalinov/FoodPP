@@ -132,8 +132,6 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', showModalByScroll);
 
     //Используем классы для карточек
-
-
     class MenuClass {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
@@ -214,8 +212,20 @@ window.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
+
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json' 
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
 
     const message = {
         load: './img/spinner.svg',
@@ -223,7 +233,9 @@ window.addEventListener('DOMContentLoaded', () => {
         failure: 'Что-то пошло не так'
     };
 
-    function postData(form) {
+
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -233,10 +245,7 @@ window.addEventListener('DOMContentLoaded', () => {
             //request.setRequestHeader('Content-type', 'application/json');
             const loadModal = document.createElement('img');
             loadModal.src = message.load;
-            loadModal.style.cssText = `
-            display: block;
-            margin: 0 auto;
-            `;  
+            loadModal.style.cssText = ``;  
             
             //загрузка
             form.insertAdjacentElement('afterend', loadModal);
@@ -248,14 +257,15 @@ window.addEventListener('DOMContentLoaded', () => {
                 obj[b] = a;
             });
 
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-type': 'application/json' 
-                },
-                body: JSON.stringify(obj)
-            })
-            .then(data => data.text())
+            // fetch('server.php', {
+            //     method: "POST",
+            //     headers: {
+            //         'Content-type': 'application/json' 
+            //     },
+            //     body: JSON.stringify(obj)
+            // })
+            postData('http://localhost:3000/requests', JSON.stringify(obj))
+            // .then(data => data.text())
             .then(data => {
                 console.log(data);
                 // успешно
