@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btnMenu[i].classList.add('tabheader__item_active');
         menuContent[i].classList.add('show', 'fade');
         menuContent[i].classList.remove('hide');
-    };
+    }
 
     hideMenuContent();
     showMenuContent(0);
@@ -183,30 +183,88 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    new MenuClass(
-        'img/tabs/vegy.jpg',
-        'vegy',
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        15,
-        '.menu .container', 'menu__item', 'big'
-    ).render();
-    new MenuClass(
-        'img/tabs/elite.jpg',
-        'elite',
-        'Меню “Премиум”',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!!',
-        18,
-        '.menu .container', 'menu__item', 'big'
-    ).render();
-    new MenuClass(
-        'img/tabs/vegy.jpg',
-        'vegy',
-        'Меню "Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        14,
-        '.menu .container', 'menu__item', 'big'
-    ).render();
+    const getRes = async (url) => {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${res.status}`);
+        }
+
+        return await res.json();
+    };
+
+    // getRes('http://localhost:3000/menu')
+    // .then(data => {
+    //     data.forEach(({img, altimg, title, descr, price}) => {
+    //         new MenuClass(/* obj.img, obj.altimg, obj.title, obj.descr, obj.price */ img, altimg, title, descr, price, '.menu .container').render();
+    //     });
+    // });
+
+    // getRes('http://localhost:3000/menu')
+    // .then(data => {
+    //     createCard(data);
+    // });
+
+    axios.get('http://localhost:3000/menu')
+    .then(data => {
+        createCard(data);
+    });
+
+    function createCard(data) {
+        data.data.forEach(({img, altimg, title, descr, price}) => {
+            const elem = document.createElement('div');
+            price = (price * 2.43).toFixed(2);
+            elem.classList.add('menu__item');
+
+            elem.innerHTML = `
+                <img src=${img} alt=${altimg}>
+                <h3 class="menu__item-subtitle">
+                    ${title}
+                </h3>
+                <div class="menu__item-descr">
+                    ${descr}
+                </div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">
+                        Цена:
+                    </div>
+                    <div class="menu__item-total">
+                        <span>
+                            ${price}
+                        </span>
+                            BYN/день
+                    </div>
+                </div>
+            `;
+            document.querySelector('.menu .container').append(elem);
+        });
+    }
+ 
+    // new MenuClass(
+    //     'img/tabs/vegy.jpg',
+    //     'vegy',
+    //     'Меню "Фитнес"',
+    //     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    //     15,
+    //     '.menu .container', 'menu__item', 'big'
+    // ).render();
+    // new MenuClass(
+    //     'img/tabs/elite.jpg',
+    //     'elite',
+    //     'Меню “Премиум”',
+    //     'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!!',
+    //     18,
+    //     '.menu .container', 'menu__item', 'big'
+    // ).render();
+    // new MenuClass(
+    //     'img/tabs/vegy.jpg',
+    //     'vegy',
+    //     'Меню "Постное"',
+    //     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+    //     14,
+    //     '.menu .container', 'menu__item', 'big'
+    // ).render();
 
     // Forms
     const forms = document.querySelectorAll('form');
@@ -252,11 +310,18 @@ window.addEventListener('DOMContentLoaded', () => {
  
             const formData = new FormData(form);
 
-            const obj = {};
-            formData.forEach(function (a, b) {
-                obj[b] = a;
-            });
-
+            // const obj = {};
+            // formData.forEach(function (a, b) {
+            //     obj[b] = a;
+            // });
+            const toJson = JSON.stringify(Object.fromEntries(formData.entries()));
+//////////////////////////////////////////////////////
+            // const obj = {
+            //     a:23,
+            //     b: 'dmkdfdfmsdk'
+            // };
+            // console.log(Object.entries(obj));
+//////////////////////////////////////////////////////
             // fetch('server.php', {
             //     method: "POST",
             //     headers: {
@@ -264,7 +329,7 @@ window.addEventListener('DOMContentLoaded', () => {
             //     },
             //     body: JSON.stringify(obj)
             // })
-            postData('http://localhost:3000/requests', JSON.stringify(obj))
+            postData('http://localhost:3000/requests', toJson)
             // .then(data => data.text())
             .then(data => {
                 console.log(data);
@@ -325,100 +390,4 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 3000);
 
     }
-
-    // fetch('https://jsonplaceholder.typicode.com/posts', {
-    //     method: 'POST',
-    //     body: JSON.stringify({name: 'Alex'}),
-    //     headers: {
-    //         'Content-type': 'application/json'
-    //     }
-    // })
-    //     .then(response => response.json())
-    //     .then(json => console.log(json));
-
-    // const form = document.querySelectorAll('form');
-
-    // const message = {
-    //     load: 'img/form/spinner.svg',
-    //     success: 'Спасибо! Скоро мы вам перезвоним',
-    //     failure: 'Что-то пошло не так'
-    // };
-
-    // form.forEach(item => {
-    //     postData(item);
-    // });
-
-    // function postData(form) {
-    //     form.addEventListener('submit', (e) => {
-    //         e.preventDefault();
-
-    //         const statusMessage = document.createElement('img');
-    //         statusMessage.src = message.load;
-    //         statusMessage.style.cssText = `
-    //             display: block;
-    //             margin: 0 auto;
-    //         `;
-    //         statusMessage.textContent = message.load;
-
-    //         form.insertAdjacentElement('afterend', statusMessage);
-
-    //         const formData = new FormData(form);
-
-    //         const object = {};
-    //         formData.forEach(function(value, key) {
-    //             object[key] = value;
-    //         });
-
-
-    //         fetch('server.php', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-type': 'application/json'
-    //             },
-    //             body: JSON.stringify(object)
-    //         })
-    //         .then(data => data.text())
-    //         .then(data => {
-    //             console.log(data);
-    //             showThanksModal(message.success);
-    //             statusMessage.classList.remove('show', 'fade');
-    //             statusMessage.classList.add('hide');
-    //         }).catch(() => {
-    //             showThanksModal(message.failure);
-    //         }).finally(() => {
-    //             form.reset();
-    //         });
-
-    //         function showThanksModal(message) {
-    //             const prevModalDialog = document.querySelector('.modal__dialog');
-    //             prevModalDialog.classList.add('hide');
-    //             openModal();
-
-    //             const thanksModal = document.createElement('div');
-    //             thanksModal.classList.add('modal__dialog');
-    //             thanksModal.innerHTML = `
-    //             <div class="modal__content">
-    //                 <div class="modal__close" data-close>×</div>
-    //                 <div class="modal__title">${message}</div>
-    //             </div>
-    //             `;
-
-    //             const thanksModalBlock = document.querySelector('.modal');
-    //             thanksModalBlock.append(thanksModal);
-    //             setTimeout(() => {
-    //                 thanksModal.remove();
-    //                 prevModalDialog.classList.add('show');
-    //                 prevModalDialog.classList.remove('hide');
-    //                 closeModal();
-    //                 statusMessage.style.cssText = ``;
-    //             }, 4000);
-
-    //         }
-    //     });
-    // }
-
-    // fetch(' http://localhost:3000/menu')
-    // .then(data => data.json())
-    // .then(res => console.log(res));
-
 });
