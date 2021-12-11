@@ -206,12 +206,18 @@ window.addEventListener('DOMContentLoaded', () => {
     // });
 
     axios.get('http://localhost:3000/menu')
-    .then(data => {
-        createCard(data);
-    });
+        .then(data => {
+            createCard(data);
+        });
 
     function createCard(data) {
-        data.data.forEach(({img, altimg, title, descr, price}) => {
+        data.data.forEach(({
+            img,
+            altimg,
+            title,
+            descr,
+            price
+        }) => {
             const elem = document.createElement('div');
             price = (price * 2.43).toFixed(2);
             elem.classList.add('menu__item');
@@ -240,7 +246,7 @@ window.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.menu .container').append(elem);
         });
     }
- 
+
     // new MenuClass(
     //     'img/tabs/vegy.jpg',
     //     'vegy',
@@ -277,7 +283,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const res = await fetch(url, {
             method: "POST",
             headers: {
-                'Content-type': 'application/json' 
+                'Content-type': 'application/json'
             },
             body: data
         });
@@ -298,16 +304,16 @@ window.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
 
             //const request = new XMLHttpRequest();
-        
+
             //request.open('POST', 'server.php');
             //request.setRequestHeader('Content-type', 'application/json');
             const loadModal = document.createElement('img');
             loadModal.src = message.load;
-            loadModal.style.cssText = ``;  
-            
+            loadModal.style.cssText = ``;
+
             //загрузка
             form.insertAdjacentElement('afterend', loadModal);
- 
+
             const formData = new FormData(form);
 
             // const obj = {};
@@ -315,13 +321,13 @@ window.addEventListener('DOMContentLoaded', () => {
             //     obj[b] = a;
             // });
             const toJson = JSON.stringify(Object.fromEntries(formData.entries()));
-//////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
             // const obj = {
             //     a:23,
             //     b: 'dmkdfdfmsdk'
             // };
             // console.log(Object.entries(obj));
-//////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
             // fetch('server.php', {
             //     method: "POST",
             //     headers: {
@@ -330,23 +336,23 @@ window.addEventListener('DOMContentLoaded', () => {
             //     body: JSON.stringify(obj)
             // })
             postData('http://localhost:3000/requests', toJson)
-            // .then(data => data.text())
-            .then(data => {
-                console.log(data);
-                // успешно
-                showModal(message.success);
-                loadModal.remove();
-            })
-            .catch(() => {
-                //  неудача
-                showModal(message.failure); 
-                loadModal.remove();
-            })
-            .finally(() => {
-                form.reset();
-            });
+                // .then(data => data.text())
+                .then(data => {
+                    console.log(data);
+                    // успешно
+                    showModal(message.success);
+                    loadModal.remove();
+                })
+                .catch(() => {
+                    //  неудача
+                    showModal(message.failure);
+                    loadModal.remove();
+                })
+                .finally(() => {
+                    form.reset();
+                });
 
-            
+
             // request.addEventListener('load', () => {
             //     if (request.status === 200) {
             //         console.log(request.response);
@@ -397,164 +403,160 @@ window.addEventListener('DOMContentLoaded', () => {
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
         current = document.querySelector('#current'),
-        total = document.querySelector('#total'), 
+        total = document.querySelector('#total'),
         sliderWrapper = document.querySelector('.offer__slider-wrapper'),
         sliderArea = document.querySelector('.offer__slider-inner'),
-
+        dots = document.createElement('ol'),
+        dotsMas = [],
         widthOfSlide = window.getComputedStyle(sliderWrapper).width;
 
-        let numOfSlide = 1;
-        let offset = 0;
-        //second type
-        sliderArea.style.width = 100 * slides.length + '%';
+    let numOfSlide = 1;
+    let offset = 0;
+    //second type
+    sliderArea.style.width = 100 * slides.length + '%';
+    slider.style.position = 'relative';
 
-        slider.style.position = 'relative';
+    dots.classList.add('carousel-indicators');
+    slider.append(dots);
 
-        //Dots
-        const dots = document.createElement('ol'),
-            dotsMas = [];
-
-        dots.classList.add('carousel-indicators');
-        slider.append(dots);
-
-        for (let i = 0; i < slides.length; i++) {
-            const dot = document.createElement('li');
-            dot.setAttribute('data-slide-to', i + 1);
-            dot.classList.add('dot');
-             if(i == 0) {
-                dot.classList.add('dot__active');
-            }
-            dots.append(dot);
-            dotsMas.push(dot); 
+    for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.classList.add('dot');
+        if (i == 0) {
+            dot.classList.add('dot__active');
         }
-        
-        slides.forEach(slide => {
-            slide.style.width = widthOfSlide;
-        });
+        dots.append(dot);
+        dotsMas.push(dot);
+    }
+
+    slides.forEach(slide => {
+        slide.style.width = widthOfSlide;
+    });
 
 
-        function currentTotal(num){
-            if(num < 1){
-                current.textContent = slides.length;
-                numOfSlide = slides.length;
-            }
-            if(num > slides.length) {
-                current.textContent = 1;
-                numOfSlide = 1;
-            }
+    function currentTotal(num) {
+        if (num < 1) {
+            current.textContent = slides.length;
+            numOfSlide = slides.length;
+        }
+        if (num > slides.length) {
+            current.textContent = 1;
+            numOfSlide = 1;
+        }
 
-            if (slides.length < 10) {
-                total.textContent = `0${slides.length}`;
+        if (slides.length < 10) {
+            total.textContent = `0${slides.length}`;
+            current.textContent = `0${numOfSlide}`;
+        } else {
+            total.textContent = slides.length;
+            if (numOfSlide < 10) {
                 current.textContent = `0${numOfSlide}`;
             } else {
-                total.textContent = slides.length;
-                if (numOfSlide < 10) {
-                    current.textContent = `0${numOfSlide}`;
-                } else {
-                    current.textContent = numOfSlide;
-                }
+                current.textContent = numOfSlide;
             }
         }
+    }
+    currentTotal(numOfSlide);
+
+    function dotsSwitch(item, type, num) {
+        item.forEach(dot => {
+            dot.classList.remove(type);
+        });
+        item[num - 1].classList.add(type);
+    }
+
+    prev.addEventListener('click', function prevSlide() {
+
+        if (offset == 0) {
+            offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1);
+        } else {
+            offset -= +widthOfSlide.slice(0, widthOfSlide.length - 2);
+        }
+
+        sliderArea.style.transform = `translateX(-${offset}px)`;
+
+        if (numOfSlide < 1) {
+            numOfSlide = numOfSlide;
+        } else {
+            numOfSlide--;
+        }
+
         currentTotal(numOfSlide);
+        dotsSwitch(dotsMas, 'dot__active', numOfSlide);
+    });
 
-        function dotsSwitch(item, type, num){
-            item.forEach(dot => {
-                dot.classList.remove(type);
-            });
-            item[num - 1].classList.add(type);
+    next.addEventListener('click', () => {
+
+        if (offset == +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1)) {
+            offset = 0;
+        } else {
+            offset += +widthOfSlide.slice(0, widthOfSlide.length - 2);
+        }
+        sliderArea.style.transform = `translateX(-${offset}px)`;
+
+        if (numOfSlide == slides.length) {
+            numOfSlide = 1;
+        } else {
+            numOfSlide++;
         }
 
-        prev.addEventListener('click', function prevSlide() {
+        currentTotal(numOfSlide);
+        dotsSwitch(dotsMas, 'dot__active', numOfSlide);
+    });
 
-            if (offset == 0) {
-                offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1);
-            } else {
-                offset -= +widthOfSlide.slice(0, widthOfSlide.length - 2);
-            }
+    dotsMas.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
 
-            sliderArea.style.transform = `translateX(-${offset}px)`;
-
-            if (numOfSlide < 1) {
-                numOfSlide = numOfSlide;
-            } else {
-                numOfSlide--;
-            }
+            numOfSlide = slideTo;
 
             currentTotal(numOfSlide);
-            dotsSwitch(dotsMas, 'dot__active', numOfSlide);
-        });
 
-        next.addEventListener('click', () => {
-            
-            if (offset == +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1)) {
-                offset = 0;
-            } else {
-                offset += +widthOfSlide.slice(0, widthOfSlide.length - 2);
-            }
+            offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slideTo - 1);
             sliderArea.style.transform = `translateX(-${offset}px)`;
 
-            if (numOfSlide == slides.length) {
-                numOfSlide = 1;
-            } else {
-                numOfSlide++;
-            }
-
-            currentTotal(numOfSlide);   
             dotsSwitch(dotsMas, 'dot__active', numOfSlide);
         });
+    });
 
-        dotsMas.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const slideTo = e.target.getAttribute('data-slide-to');
-                
-                numOfSlide = slideTo;
+    // //firs type
 
-                currentTotal(numOfSlide);
+    // showSlide(numOfSlide);
+    // function showSlide(num) {
+    //     if(num > slides.length) {
+    //         numOfSlide = 1;
+    //     } 
+    //     if (num < 1) {
+    //         numOfSlide = slides.length;
+    //     }
+    //     slides.forEach(item => {
+    //         item.classList.add('hide');
+    //         item.classList.remove('show', 'fade');
+    //     });
+    //     slides[numOfSlide - 1].classList.add('show','fade');
+    //     slides[numOfSlide - 1].classList.remove('hide');
+    //     if(slides.length < 10) {
+    //         total.textContent = `0${slides.length}`;
+    //         curren.textContent = `0${numOfSlide}`;
+    //     } else {
+    //         total.textContent = slides.length;
+    //         if (numOfSlide < 10) {
+    //             current.textContent = `0${numOfSlide}`;
+    //         } else {
+    //             current.textContent = numOfSlide;
+    //         }
+    //     }
+    // }
 
-                offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slideTo - 1);
-                sliderArea.style.transform = `translateX(-${offset}px)`;
+    // function plusSlide(num) {
+    //     showSlide(numOfSlide += num);
+    // }
 
-                dotsSwitch(dotsMas, 'dot__active', numOfSlide);
-                });
-        });        
-        
-        // //firs type
-
-        // showSlide(numOfSlide);
-        // function showSlide(num) {
-        //     if(num > slides.length) {
-        //         numOfSlide = 1;
-        //     } 
-        //     if (num < 1) {
-        //         numOfSlide = slides.length;
-        //     }
-        //     slides.forEach(item => {
-        //         item.classList.add('hide');
-        //         item.classList.remove('show', 'fade');
-        //     });
-        //     slides[numOfSlide - 1].classList.add('show','fade');
-        //     slides[numOfSlide - 1].classList.remove('hide');
-        //     if(slides.length < 10) {
-        //         total.textContent = `0${slides.length}`;
-        //         curren.textContent = `0${numOfSlide}`;
-        //     } else {
-        //         total.textContent = slides.length;
-        //         if (numOfSlide < 10) {
-        //             current.textContent = `0${numOfSlide}`;
-        //         } else {
-        //             current.textContent = numOfSlide;
-        //         }
-        //     }
-        // }
-        
-        // function plusSlide(num) {
-        //     showSlide(numOfSlide += num);
-        // }
-
-        // prev.addEventListener('click',() => {
-        //     plusSlide(-1);
-        // });
-        // next.addEventListener('click',() => {
-        //     plusSlide(+1);
-        // });
+    // prev.addEventListener('click',() => {
+    //     plusSlide(-1);
+    // });
+    // next.addEventListener('click',() => {
+    //     plusSlide(+1);
+    // });
 });
