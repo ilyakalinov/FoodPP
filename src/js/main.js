@@ -120,7 +120,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 3000);
+    const modalTimerId = setTimeout(openModal, 50000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -388,6 +388,173 @@ window.addEventListener('DOMContentLoaded', () => {
             document.querySelector('form input').value = '';
             closeModal();
         }, 3000);
-
     }
+
+    //Slider
+
+    const slider = document.querySelector('.offer__slider'),
+        slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'), 
+        sliderWrapper = document.querySelector('.offer__slider-wrapper'),
+        sliderArea = document.querySelector('.offer__slider-inner'),
+
+        widthOfSlide = window.getComputedStyle(sliderWrapper).width;
+
+        let numOfSlide = 1;
+        let offset = 0;
+        //second type
+        sliderArea.style.width = 100 * slides.length + '%';
+
+        slider.style.position = 'relative';
+
+        //Dots
+        const dots = document.createElement('ol'),
+            dotsMas = [];
+
+        dots.classList.add('carousel-indicators');
+        slider.append(dots);
+
+        for (let i = 0; i < slides.length; i++) {
+            const dot = document.createElement('li');
+            dot.setAttribute('data-slide-to', i + 1);
+            dot.classList.add('dot');
+             if(i == 0) {
+                dot.classList.add('dot__active');
+            }
+            dots.append(dot);
+            dotsMas.push(dot); 
+        }
+        
+        slides.forEach(slide => {
+            slide.style.width = widthOfSlide;
+        });
+
+
+        function currentTotal(num){
+            if(num < 1){
+                current.textContent = slides.length;
+                numOfSlide = slides.length;
+            }
+            if(num > slides.length) {
+                current.textContent = 1;
+                numOfSlide = 1;
+            }
+
+            if (slides.length < 10) {
+                total.textContent = `0${slides.length}`;
+                current.textContent = `0${numOfSlide}`;
+            } else {
+                total.textContent = slides.length;
+                if (numOfSlide < 10) {
+                    current.textContent = `0${numOfSlide}`;
+                } else {
+                    current.textContent = numOfSlide;
+                }
+            }
+        }
+        currentTotal(numOfSlide);
+
+        function dotsSwitch(item, type, num){
+            item.forEach(dot => {
+                dot.classList.remove(type);
+            });
+            item[num - 1].classList.add(type);
+        }
+
+        prev.addEventListener('click', function prevSlide() {
+
+            if (offset == 0) {
+                offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1);
+            } else {
+                offset -= +widthOfSlide.slice(0, widthOfSlide.length - 2);
+            }
+
+            sliderArea.style.transform = `translateX(-${offset}px)`;
+
+            if (numOfSlide < 1) {
+                numOfSlide = numOfSlide;
+            } else {
+                numOfSlide--;
+            }
+
+            currentTotal(numOfSlide);
+            dotsSwitch(dotsMas, 'dot__active', numOfSlide);
+        });
+
+        next.addEventListener('click', () => {
+            
+            if (offset == +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slides.length - 1)) {
+                offset = 0;
+            } else {
+                offset += +widthOfSlide.slice(0, widthOfSlide.length - 2);
+            }
+            sliderArea.style.transform = `translateX(-${offset}px)`;
+
+            if (numOfSlide == slides.length) {
+                numOfSlide = 1;
+            } else {
+                numOfSlide++;
+            }
+
+            currentTotal(numOfSlide);   
+            dotsSwitch(dotsMas, 'dot__active', numOfSlide);
+        });
+
+        dotsMas.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const slideTo = e.target.getAttribute('data-slide-to');
+                
+                numOfSlide = slideTo;
+
+                currentTotal(numOfSlide);
+
+                offset = +widthOfSlide.slice(0, widthOfSlide.length - 2) * (slideTo - 1);
+                sliderArea.style.transform = `translateX(-${offset}px)`;
+
+                dotsSwitch(dotsMas, 'dot__active', numOfSlide);
+                });
+        });        
+        
+        // //firs type
+
+        // showSlide(numOfSlide);
+        // function showSlide(num) {
+        //     if(num > slides.length) {
+        //         numOfSlide = 1;
+        //     } 
+        //     if (num < 1) {
+        //         numOfSlide = slides.length;
+        //     }
+        //     slides.forEach(item => {
+        //         item.classList.add('hide');
+        //         item.classList.remove('show', 'fade');
+        //     });
+        //     slides[numOfSlide - 1].classList.add('show','fade');
+        //     slides[numOfSlide - 1].classList.remove('hide');
+        //     if(slides.length < 10) {
+        //         total.textContent = `0${slides.length}`;
+        //         curren.textContent = `0${numOfSlide}`;
+        //     } else {
+        //         total.textContent = slides.length;
+        //         if (numOfSlide < 10) {
+        //             current.textContent = `0${numOfSlide}`;
+        //         } else {
+        //             current.textContent = numOfSlide;
+        //         }
+        //     }
+        // }
+        
+        // function plusSlide(num) {
+        //     showSlide(numOfSlide += num);
+        // }
+
+        // prev.addEventListener('click',() => {
+        //     plusSlide(-1);
+        // });
+        // next.addEventListener('click',() => {
+        //     plusSlide(+1);
+        // });
 });
