@@ -1,138 +1,163 @@
-window.addEventListener('DOMContentLoaded', () => {
-    const btnMenu = document.querySelectorAll('.tabheader__item'),
-        menuContent = document.querySelectorAll('.tabcontent'),
-        btnParent = document.querySelector('.tabheader__items');
-    //Tabs
-    function hideMenuContent() {
-        menuContent.forEach(item => {
-            item.classList.add('hide');
-            item.classList.remove('show', 'fade');
-        });
-        btnMenu.forEach(item => {
-            item.classList.remove('tabheader__item_active');
-        });
-    }
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-    function showMenuContent(i = 0) {
-        btnMenu[i].classList.add('tabheader__item_active');
-        menuContent[i].classList.add('show', 'fade');
-        menuContent[i].classList.remove('hide');
-    }
+/***/ "./src/js/modules/calc.js":
+/*!********************************!*\
+  !*** ./src/js/modules/calc.js ***!
+  \********************************/
+/***/ ((module) => {
 
-    hideMenuContent();
-    showMenuContent(0);
+function calc() {
+    const result = document.querySelector('.calculating__result');
+    let sex, height, weight, age, ratio;
 
-    btnParent.addEventListener('click', (event) => {
-        const target = event.target;
-        btnMenu.forEach((item, i) => {
-            if (target == item) {
-                hideMenuContent();
-                showMenuContent(i);
-            }
-        });
-    });
-
-    //timer
-
-    const deadline = '2021-12-2 12:30';
-
-    function getTimeRemaining(endtime) {
-        const t = Date.parse(endtime) - Date.parse(new Date()),
-            days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
-            minutes = Math.floor(t / 1000 / 60 % 60),
-            seconds = Math.floor((t / 1000) % 60);
-        return {
-            'total': t,
-            'days': days,
-            'hours': hours,
-            'minutes': minutes,
-            'seconds': seconds
-        };
-    }
-
-    function getZero(num) {
-        if (num >= 0 && num < 10) {
-            return `0${num}`;
+    function calcTotal() {
+        if (!sex || !height || !weight || !age || !ratio) {
+            result.textContent = 'Заполните все данные';
+            result.style.color = 'red';
+            result.style.fontSize = '20px';
+            return;
+        }
+        if (sex === 'female') {
+            result.textContent = (Math.round(447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio).toFixed(0);
         } else {
-            return num;
+            result.textContent = (Math.round(88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio).toFixed(0);
         }
     }
+    calcTotal();
 
-    function setClock(selector, endtime) {
-        const timer = document.querySelector(selector),
-            days = timer.querySelector('#days'),
-            hours = timer.querySelector('#hours'),
-            minutes = timer.querySelector('#minutes'),
-            seconds = timer.querySelector('#seconds'),
-            timeInterval = setInterval(updateClock, 1000);
+    function getStaticInformation(parentSelector, activeClass) {
+        const elements = document.querySelectorAll(`${parentSelector} div`);
 
-        updateClock();
+        document.querySelector(parentSelector).addEventListener('click', (e) => {
+            if (e.target.getAttribute('data-ratio')) {
+                ratio = +e.target.getAttribute('data-ratio');
+                localStorage.setItem('ratio', `${+e.target.getAttribute('data-ratio')}`);
+            } else {
+                sex = e.target.getAttribute('id');
+                localStorage.setItem('sex', `${e.target.getAttribute('id')}`);
+            }
 
-        function updateClock() {
-            const t = getTimeRemaining(endtime);
+            console.log(ratio, sex);
 
-            days.innerHTML = getZero(t.days);
-            hours.innerHTML = getZero(t.hours);
-            minutes.innerHTML = getZero(t.minutes);
-            seconds.innerHTML = getZero(t.seconds);
+            elements.forEach(item => {
+                item.classList.remove(activeClass);
+            });
+            if (e.target.classList.contains('calculating__choose-item')) {
+                e.target.classList.add(activeClass);
+            }
+            calcTotal();
+        });
 
-            if (t.total <= 0) {
-                clearInterval(timeInterval);
+        function getFormSex(activeClass) {
+            if (localStorage.getItem('sex') == 'male') {
+                console.log(localStorage.getItem('sex'));
+                document.querySelector('#male').classList.add(activeClass);
+                sex = localStorage.getItem('sex');
+            }
+            if (localStorage.getItem('sex') == 'female') {
+                document.querySelector('#female').classList.add(activeClass);
+                sex = localStorage.getItem('sex');
+            }
+            if (localStorage.getItem('ratio') == "1.2") {
+                document.querySelector('#small').classList.add(activeClass);
+                ratio = localStorage.getItem('ratio');
+            }
+            if (localStorage.getItem('ratio') == "1.375") {
+                document.querySelector('#medium').classList.add(activeClass);
+                ratio = localStorage.getItem('ratio');
+            }
+            if (localStorage.getItem('ratio') == "1.55") {
+                document.querySelector('#high').classList.add(activeClass);
+                ratio = localStorage.getItem('ratio');
+            }
+            if (localStorage.getItem('ratio') == "1.725") {
+                document.querySelector('#veryhigh').classList.add(activeClass);
+                ratio = localStorage.getItem('ratio');
             }
         }
+        getFormSex(activeClass);
     }
 
-    setClock('.timer', deadline);
+    getStaticInformation('#gender', 'calculating__choose-item_active');
+    getStaticInformation('.calculating__choose_big', 'calculating__choose-item_active');
 
-    //Modal
+    function getDynamicInformation(selector, set) {
+        const input = document.querySelector(selector);
 
-    const modalTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal');
+        function getForm(set) {
+            console.log(localStorage.getItem(set));
+            input.value = localStorage.getItem(set);
+            if (set == 'height') {
+                height = +localStorage.getItem(set);
+            }
+            if (set == 'weight') {
+                weight = +localStorage.getItem(set);
+            }
+            if (set == 'age') {
+                age = +localStorage.getItem(set);
+            }
+        }
+        getForm(set);
+        calcTotal();
 
-    function openModal() {
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        clearInterval(modalTimerId);
-    }
+        input.addEventListener('input', () => {
 
-    function closeModal() {
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-    }
-
-    modalTrigger.forEach(item => {
-        item.addEventListener('click', () => {
-            openModal();
+            if (input.value.match(/\D/g)) {
+                input.style.border = '1px solid red';
+            } else {
+                input.style.border = 'none';
+            }
+            
+            if(input.getAttribute('id') == 'height') {
+                height = +input.value;
+                localStorage.setItem('height', height);
+                calcTotal();
+            }
+            if (input.getAttribute('id') == 'weight'){
+                weight = +input.value;
+                localStorage.setItem('weight', weight);
+                calcTotal();
+            }
+            if(input.getAttribute('id') == 'age'){
+                age = +input.value;
+                localStorage.setItem('age', age);
+                calcTotal();
+            }
+            // switch (input.getAttribute('id')) {
+            //     case 'height':
+            //         height = +input.value;
+            //         localStorage.setItem('height', height);
+            //         calcTotal();
+            //     case 'weight':
+            //         weight = +input.value;
+            //         localStorage.setItem('weight', weight);
+            //         calcTotal();
+            //     case 'age':
+            //         age = +input.value;
+            //         localStorage.setItem('age', age);
+            //         calcTotal();
+            // }
         });
-    });
-
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.getAttribute('data-close') == '') {
-            closeModal();
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        const newLocal = e.code === 'Escape' && modal.classList.contains('show');
-        if (newLocal) {
-            closeModal();
-        }
-    });
-
-    const modalTimerId = setTimeout(openModal, 50000);
-
-    function showModalByScroll() {
-        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-            openModal();
-            window.removeEventListener('scroll', showModalByScroll);
-        }
+        input.value.textContent = (localStorage.getItem(set));
+        calcTotal();
     }
+    getDynamicInformation('#height', 'height');
+    getDynamicInformation('#weight', 'weight');
+    getDynamicInformation('#age', 'age');
+}
 
-    window.addEventListener('scroll', showModalByScroll);
+module.exports = calc;
 
-    //Используем классы для карточек
+/***/ }),
+
+/***/ "./src/js/modules/cards.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/cards.js ***!
+  \*********************************/
+/***/ ((module) => {
+
+function cards() {
     class MenuClass {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
@@ -396,9 +421,91 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 3000);
     }
+}
 
-    //Slider
+module.exports = cards;
 
+/***/ }),
+
+/***/ "./src/js/modules/forms.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/forms.js ***!
+  \*********************************/
+/***/ ((module) => {
+
+function forms() {
+
+}
+
+module.exports = forms;
+
+
+/***/ }),
+
+/***/ "./src/js/modules/modal.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/modal.js ***!
+  \*********************************/
+/***/ ((module) => {
+
+function modal() {
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal');
+
+    function openModal() {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    modalTrigger.forEach(item => {
+        item.addEventListener('click', () => {
+            openModal();
+        });
+    });
+
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.getAttribute('data-close') == '') {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        const newLocal = e.code === 'Escape' && modal.classList.contains('show');
+        if (newLocal) {
+            closeModal();
+        }
+    });
+
+    const modalTimerId = setTimeout(openModal, 50000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
+}
+
+module.exports = modal;
+
+/***/ }),
+
+/***/ "./src/js/modules/slider.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/slider.js ***!
+  \**********************************/
+/***/ ((module) => {
+
+function slider() {
     const slider = document.querySelector('.offer__slider'),
         slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
@@ -471,7 +578,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (offset == 0 && go == prev) {
             offset = +widthOfSlide.replace(/\D/g, '') * (slides.length - 1);
         } else {
-            if(go == prev){ 
+            if (go == prev) {
                 offset -= +widthOfSlide.replace(/\D/g, '');
             }
         }
@@ -479,9 +586,9 @@ window.addEventListener('DOMContentLoaded', () => {
         if (offset == +widthOfSlide.replace(/\D/g, '') * (slides.length - 1) && go == next) {
             offset = 0;
         } else {
-            if(go == next) {
+            if (go == next) {
                 offset += +widthOfSlide.replace(/\D/g, '');
-            } 
+            }
         }
     }
 
@@ -502,7 +609,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     next.addEventListener('click', (e) => {
         plusMinOffset(next);
-    
+
         plusMinOffset(widthOfSlide, '+');
         sliderArea.style.transform = `translateX(-${offset}px)`;
 
@@ -530,166 +637,172 @@ window.addEventListener('DOMContentLoaded', () => {
             dotsSwitch(dotsMas, 'dot__active', numOfSlide);
         });
     });
+}
 
-    //Calc
+module.exports = slider;
 
-    const result = document.querySelector('.calculating__result');
-    let sex, height, weight, age, ratio;
+/***/ }),
 
-    function calcTotal() {
-        if(!sex || !height || !weight || !age || !ratio) {
-            result.textContent = 'Заполните все данные';
-            result.style.color = 'red';
-            result.style.fontSize = '20px';
-            return;
-        }
-        if (sex === 'female') {
-            result.textContent = (Math.round(447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio).toFixed(0);
+/***/ "./src/js/modules/tabs.js":
+/*!********************************!*\
+  !*** ./src/js/modules/tabs.js ***!
+  \********************************/
+/***/ ((module) => {
+
+function tabs() {
+    const btnMenu = document.querySelectorAll('.tabheader__item'),
+        menuContent = document.querySelectorAll('.tabcontent'),
+        btnParent = document.querySelector('.tabheader__items');
+
+    function hideMenuContent() {
+        menuContent.forEach(item => {
+            item.classList.add('hide');
+            item.classList.remove('show', 'fade');
+        });
+        btnMenu.forEach(item => {
+            item.classList.remove('tabheader__item_active');
+        });
+    }
+
+    function showMenuContent(i = 0) {
+        btnMenu[i].classList.add('tabheader__item_active');
+        menuContent[i].classList.add('show', 'fade');
+        menuContent[i].classList.remove('hide');
+    }
+
+    hideMenuContent();
+    showMenuContent(0);
+
+    btnParent.addEventListener('click', (event) => {
+        const target = event.target;
+        btnMenu.forEach((item, i) => {
+            if (target == item) {
+                hideMenuContent();
+                showMenuContent(i);
+            }
+        });
+    });
+}
+
+module.exports = tabs;
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/***/ ((module) => {
+
+function timer() {
+    const deadline = '2021-12-21 12:30';
+
+    function getTimeRemaining(endtime) {
+        const t = Date.parse(endtime) - Date.parse(new Date()),
+            days = Math.floor(t / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
+            minutes = Math.floor(t / 1000 / 60 % 60),
+            seconds = Math.floor((t / 1000) % 60);
+        return {
+            'total': t,
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        };
+    }
+
+    function getZero(num) {
+        if (num >= 0 && num < 10) {
+            return `0${num}`;
         } else {
-            result.textContent =(Math.round(88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio).toFixed(0);
+            return num;
         }
     }
-    calcTotal();
-    
-    function getStaticInformation(parentSelector, activeClass) {
-        const elements = document.querySelectorAll(`${parentSelector} div`);
 
-        document.querySelector(parentSelector).addEventListener('click', (e) => {
-            if (e.target.getAttribute('data-ratio')) {
-                ratio = +e.target.getAttribute('data-ratio');
-                localStorage.setItem('ratio', `${+e.target.getAttribute('data-ratio')}`);
-            } else {
-                sex = e.target.getAttribute('id');
-                localStorage.setItem('sex', `${e.target.getAttribute('id')}`);
-            }
+    function setClock(selector, endtime) {
+        const timer = document.querySelector(selector),
+            days = timer.querySelector('#days'),
+            hours = timer.querySelector('#hours'),
+            minutes = timer.querySelector('#minutes'),
+            seconds = timer.querySelector('#seconds'),
+            timeInterval = setInterval(updateClock, 1000);
 
-            console.log(ratio, sex);
+        updateClock();
 
-            elements.forEach(item => {
-                item.classList.remove(activeClass);
-            });
-            if(e.target.classList.contains('calculating__choose-item')) {
-                e.target.classList.add(activeClass);
-            }
-            calcTotal();
-        });
+        function updateClock() {
+            const t = getTimeRemaining(endtime);
 
-        function getFormSex(activeClass) {
-            if(localStorage.getItem('sex') == 'male') {
-                console.log(localStorage.getItem('sex'));
-                document.querySelector('#male').classList.add(activeClass);
-                sex = localStorage.getItem('sex');
-            } if (localStorage.getItem('sex') == 'female') {
-                document.querySelector('#female').classList.add(activeClass);
-                sex = localStorage.getItem('sex');
-            }
-            if(localStorage.getItem('ratio') == "1.2" ) {
-                document.querySelector('#small').classList.add(activeClass);
-                ratio = localStorage.getItem('ratio');
-            }
-            if (localStorage.getItem('ratio') == "1.375" ){
-                document.querySelector('#medium').classList.add(activeClass);
-                ratio = localStorage.getItem('ratio');
-            } 
-            if (localStorage.getItem('ratio') == "1.55" ){
-                document.querySelector('#high').classList.add(activeClass);
-                ratio = localStorage.getItem('ratio');
-            } 
-            if (localStorage.getItem('ratio') == "1.725" ){
-                document.querySelector('#veryhigh').classList.add(activeClass);
-                ratio = localStorage.getItem('ratio');
+            days.innerHTML = getZero(t.days);
+            hours.innerHTML = getZero(t.hours);
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
+
+            if (t.total <= 0) {
+                clearInterval(timeInterval);
             }
         }
-        getFormSex(activeClass);
     }
+    setClock('.timer', deadline);
+}
 
-    getStaticInformation('#gender', 'calculating__choose-item_active');
-    getStaticInformation('.calculating__choose_big', 'calculating__choose-item_active');
-    
-    function getDynamicInformation(selector, set) {
-        const input = document.querySelector(selector);
-        function getForm(set){
-            console.log(localStorage.getItem(set));
-            input.value = localStorage.getItem(set);
-            if(set == 'height') {
-                height = +localStorage.getItem(set);
-            }
-            if(set == 'weight') {
-                weight = +localStorage.getItem(set);
-            }
-            if(set == 'age') {
-                age = +localStorage.getItem(set);
-            }
-        }
-        getForm(set);
-        calcTotal();
+module.exports = timer;
 
-        input.addEventListener('input', () => {
+/***/ })
 
-            if(input.value.match(/\D/g)){
-                input.style.border = '1px solid red';
-            } else {
-                input.style.border = 'none';
-            }
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**************************!*\
+  !*** ./src/js/script.js ***!
+  \**************************/
+window.addEventListener('DOMContentLoaded', () => {
+    const tabs = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js"),
+        modal = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
+        calc = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js"),
+        forms = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js"),
+        timer = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js"),
+        slider = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js"),
+        cards = __webpack_require__(/*! ./modules/cards */ "./src/js/modules/cards.js");
 
-            switch(input.getAttribute('id')) {
-                case 'height':
-                    height = +input.value;
-                    localStorage.setItem('height', height);
-                    calcTotal();
-                case 'weight':
-                    weight = +input.value;
-                    localStorage.setItem('weight', weight);
-                    calcTotal();
-                case 'age':
-                    age = +input.value;
-                    localStorage.setItem('age', age);
-                    calcTotal();
-                }
-        });
-        input.value.textContent = (localStorage.getItem('height'));
-        calcTotal();
-    }
-    getDynamicInformation('#height', 'height');
-    getDynamicInformation('#weight', 'weight');
-    getDynamicInformation('#age', 'age'); 
+    tabs();
+    modal();
+    calc();
+    forms();
+    timer();
+    slider();
+    cards();
 });
-// //firs type
 
-    // showSlide(numOfSlide);
-    // function showSlide(num) {
-    //     if(num > slides.length) {
-    //         numOfSlide = 1;
-    //     } 
-    //     if (num < 1) {
-    //         numOfSlide = slides.length;
-    //     }
-    //     slides.forEach(item => {
-    //         item.classList.add('hide');
-    //         item.classList.remove('show', 'fade');
-    //     });
-    //     slides[numOfSlide - 1].classList.add('show','fade');
-    //     slides[numOfSlide - 1].classList.remove('hide');
-    //     if(slides.length < 10) {
-    //         total.textContent = `0${slides.length}`;
-    //         curren.textContent = `0${numOfSlide}`;
-    //     } else {
-    //         total.textContent = slides.length;
-    //         if (numOfSlide < 10) {
-    //             current.textContent = `0${numOfSlide}`;
-    //         } else {
-    //             current.textContent = numOfSlide;
-    //         }
-    //     }
-    // }
+})();
 
-    // function plusSlide(num) {
-    //     showSlide(numOfSlide += num);
-    // }
-
-    // prev.addEventListener('click',() => {
-    //     plusSlide(-1);
-    // });
-    // next.addEventListener('click',() => {
-    //     plusSlide(+1);
-    // });
+/******/ })()
+;
+//# sourceMappingURL=bundle.js.map

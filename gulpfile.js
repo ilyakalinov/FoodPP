@@ -62,7 +62,7 @@ function css_styles() {
 				.pipe(gulp.dest('./build/css'));
 };
 function html() {
-	return gulp.src('./index.html')
+	return gulp.src('./src/index.html')
 				.pipe(gulp.dest('./build'))
 				.pipe(browserSync.stream());
 };
@@ -72,15 +72,15 @@ function php() {
 				.pipe(browserSync.stream());
 };
 function js(){
-	return gulp.src('./src/js/**/*')
-			.pipe(gulp.dest('./build/js'))
+	return gulp.src('./src/js/*.js')
+			//.pipe(gulp.dest('./build/js'))
 			.pipe(browserSync.stream());
 };
 
 function watch(){
 	gulp.watch('./src/css/**/*.css', styles)
-	gulp.watch('index.html', html)
-	gulp.watch('./src/js/main.js', js)
+	gulp.watch('./src/index.html', html)
+	gulp.watch('./src/js/script.js', js)
 	gulp.watch('src/img/**/*', img)
 	gulp.watch('./server.php', php)
 	browserSync.init({
@@ -91,7 +91,7 @@ function watch(){
 };
 
 let build = gulp.series(clear,
-	gulp.parallel(icons, styles, img, html, php, js));
+	gulp.parallel(icons, styles, img, html, php));
 
 gulp.task ('build', build);
 gulp.task('watch', gulp.series(build, watch));
