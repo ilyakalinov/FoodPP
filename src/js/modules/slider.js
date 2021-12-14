@@ -1,21 +1,25 @@
-function slider() {
-    const slider = document.querySelector('.offer__slider'),
-        slides = document.querySelectorAll('.offer__slide'),
-        prev = document.querySelector('.offer__slider-prev'),
-        next = document.querySelector('.offer__slider-next'),
-        current = document.querySelector('#current'),
-        total = document.querySelector('#total'),
-        sliderWrapper = document.querySelector('.offer__slider-wrapper'),
-        sliderArea = document.querySelector('.offer__slider-inner'),
-        dots = document.createElement('ol'),
-        dotsMas = [],
-        widthOfSlide = window.getComputedStyle(sliderWrapper).width;
+function slider({container, slide, nextArrow, prevArrow, currentContainer, totalContainer,
+        Wrapper, Area }) {
+    const slider = document.querySelector(slide),
+        slides = document.querySelectorAll(container),
+        prev = document.querySelector(prevArrow),
+        next = document.querySelector(nextArrow),
+        current = document.querySelector(currentContainer),
+        total = document.querySelector(totalContainer),
+        sliderWrapper = document.querySelector(Wrapper),
+        sliderArea = document.querySelector(Area);
+        
+       
 
     let numOfSlide = 1;
     let offset = 0;
     //second type
     sliderArea.style.width = 100 * slides.length + '%';
     slider.style.position = 'relative';
+    
+    const dots = document.createElement('ol'),
+    dotsMas = [],
+    widthOfSlide = window.getComputedStyle(sliderWrapper).width;
 
     dots.classList.add('carousel-indicators');
     slider.append(dots);
@@ -132,4 +136,6 @@ function slider() {
     });
 }
 
-module.exports = slider;
+// module.exports = slider;
+
+export default slider;

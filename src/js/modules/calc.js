@@ -77,7 +77,6 @@ function calc() {
         const input = document.querySelector(selector);
 
         function getForm(set) {
-            console.log(localStorage.getItem(set));
             input.value = localStorage.getItem(set);
             if (set == 'height') {
                 height = +localStorage.getItem(set);
@@ -130,7 +129,7 @@ function calc() {
             //         calcTotal();
             // }
         });
-        input.value.textContent = (localStorage.getItem(set));
+        // input.value.textContent = (localStorage.getItem(set));
         calcTotal();
     }
     getDynamicInformation('#height', 'height');
@@ -138,4 +137,6 @@ function calc() {
     getDynamicInformation('#age', 'age');
 }
 
-module.exports = calc;
+//module.exports = calc;
+
+export default calc;

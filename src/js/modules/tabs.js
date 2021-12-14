@@ -1,7 +1,7 @@
-function tabs() {
-    const btnMenu = document.querySelectorAll('.tabheader__item'),
-        menuContent = document.querySelectorAll('.tabcontent'),
-        btnParent = document.querySelector('.tabheader__items');
+function tabs(tabsSelector, tabsContent, tabsParentSelector, activeClass) {
+    const btnMenu = document.querySelectorAll(tabsSelector),
+        menuContent = document.querySelectorAll(tabsContent),
+        btnParent = document.querySelector(tabsParentSelector);
 
     function hideMenuContent() {
         menuContent.forEach(item => {
@@ -9,12 +9,12 @@ function tabs() {
             item.classList.remove('show', 'fade');
         });
         btnMenu.forEach(item => {
-            item.classList.remove('tabheader__item_active');
+            item.classList.remove(activeClass);
         });
     }
 
     function showMenuContent(i = 0) {
-        btnMenu[i].classList.add('tabheader__item_active');
+        btnMenu[i].classList.add(activeClass);
         menuContent[i].classList.add('show', 'fade');
         menuContent[i].classList.remove('hide');
     }
@@ -33,4 +33,6 @@ function tabs() {
     });
 }
 
-module.exports = tabs;
+// module.exports = tabs;
+
+export default tabs;
